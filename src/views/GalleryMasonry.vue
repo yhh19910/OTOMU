@@ -29,7 +29,7 @@ const initMasonry = () => {
   // 初始化每列的高度
   const columnHeights = new Array(columns).fill(0);
   
-  items.forEach((item: Element, index: number) => {
+  items.forEach((item: Element) => {
     const htmlItem = item as HTMLElement;
     
     // 找到最短的列
