@@ -44,7 +44,7 @@ onMounted(() => {
 <style scoped>
 .home {
   height: calc(100vh - 120px); /* Full height minus nav */
-  background-image: url('../assets/bg/home-bg.jpg');
+  background-image: url('../assets/bg/home-bg.JPG');
   background-size: cover; /* Fill the entire container */
   background-repeat: no-repeat;
   background-position: center;
@@ -75,10 +75,11 @@ onMounted(() => {
 .hero-content {
   text-align: center;
   color: white;
-  z-index: 2;
+  z-index: 10;
   max-width: 600px;
   padding: 2rem;
   animation: fadeInUp 1.2s ease-out;
+  position: relative;
 }
 
 .brand-title {
@@ -138,6 +139,9 @@ onMounted(() => {
   position: relative;
   overflow: hidden;
   animation: slideInUp 0.8s ease-out both;
+  z-index: 100;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
 .gallery-btn {
@@ -222,6 +226,9 @@ onMounted(() => {
   .cta-button {
     width: 200px;
     justify-content: center;
+    min-height: 48px;
+    z-index: 100;
+    position: relative;
   }
   
   .hero-content {
@@ -239,8 +246,12 @@ onMounted(() => {
   }
   
   .cta-button {
-    padding: 0.8rem 1.5rem;
+    padding: 1rem 1.5rem;
     font-size: 1rem;
+    min-height: 48px;
+    z-index: 100;
+    position: relative;
+    touch-action: manipulation;
   }
 }
 </style>

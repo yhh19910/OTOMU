@@ -138,10 +138,12 @@ nav {
   z-index: 999;
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .mobile-overlay.active {
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* 響應式設計 */
@@ -156,6 +158,10 @@ nav {
   
   .mobile-overlay {
     display: block;
+  }
+  
+  .mobile-overlay:not(.active) {
+    pointer-events: none;
   }
   
   .nav-links {
