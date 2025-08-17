@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>導航動畫測試</title>
+    <style>
+        body {
+            font-family: Avenir, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background-color: #f5f5f5;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #556B2F;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .logo:hover {
+            animation: bounce 0.6s ease-in-out;
+            color: #3B5323;
+        }
+        
+        .nav-links a {
+            font-weight: bold;
+            color: #556B2F;
+            margin-left: 2rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .nav-links a:hover {
+            animation: bounce 0.6s ease-in-out;
+            color: #3B5323;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 60%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-8px);
+            }
+            80% {
+                transform: translateY(-4px);
+            }
+        }
+        
+        .demo-info {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="#" class="logo">音紡 ; OTOMU</a>
+        <div class="nav-links">
+            <a href="#">ホームページ</a>
+            <a href="#">写真</a>
+            <a href="#">音楽コラム</a>
+            <a href="#">説明</a>
+        </div>
+    </nav>
+    
+    <div class="demo-info">
+        <h2>導航動畫效果測試</h2>
+        <p>將鼠標懸停在導航項目上，您會看到文字跳動的動畫效果。</p>
+        <ul>
+            <li>動畫持續時間：0.6秒</li>
+            <li>跳動高度：最高8px，次高4px</li>
+            <li>顏色變化：從橄欖綠變為深橄欖綠</li>
+            <li>過渡效果：平滑的0.3秒過渡</li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡單逐字動畫測試</title>
+    <style>
+        body {
+            font-family: Avenir, Helvetica, Arial, sans-serif;
+            padding: 4rem;
+            background: #f5f5f5;
+        }
+        
+        .test-nav {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-item {
+            font-weight: bold;
+            color: #556B2F;
+            text-decoration: none;
+            margin: 0 1rem;
+            display: inline-block;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+        }
+        
+        .char {
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item:hover .char {
+            animation: bounce 0.6s ease-in-out;
+            color: #3B5323;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 60%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-8px);
+            }
+            80% {
+                transform: translateY(-4px);
+            }
+        }
+        
+        /* 逐字延遲 */
+        .nav-item:hover .char:nth-child(1) { animation-delay: 0s; }
+        .nav-item:hover .char:nth-child(2) { animation-delay: 0.05s; }
+        .nav-item:hover .char:nth-child(3) { animation-delay: 0.1s; }
+        .nav-item:hover .char:nth-child(4) { animation-delay: 0.15s; }
+        .nav-item:hover .char:nth-child(5) { animation-delay: 0.2s; }
+        .nav-item:hover .char:nth-child(6) { animation-delay: 0.25s; }
+        .nav-item:hover .char:nth-child(7) { animation-delay: 0.3s; }
+        .nav-item:hover .char:nth-child(8) { animation-delay: 0.35s; }
+        .nav-item:hover .char:nth-child(9) { animation-delay: 0.4s; }
+        .nav-item:hover .char:nth-child(10) { animation-delay: 0.45s; }
+        
+        .demo-info {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .highlight {
+            background: #556B2F;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-nav">
+        <a href="#" class="nav-item logo">
+            <span class="char">音</span>
+            <span class="char">紡</span>
+            <span class="char">&nbsp;</span>
+            <span class="char">;</span>
+            <span class="char">&nbsp;</span>
+            <span class="char">O</span>
+            <span class="char">T</span>
+            <span class="char">O</span>
+            <span class="char">M</span>
+            <span class="char">U</span>
+        </a>
+        
+        <div style="display: flex;">
+            <a href="#" class="nav-item">
+                <span class="char">ホ</span>
+                <span class="char">ー</span>
+                <span class="char">ム</span>
+                <span class="char">ペ</span>
+                <span class="char">ー</span>
+                <span class="char">ジ</span>
+            </a>
+            
+            <a href="#" class="nav-item">
+                <span class="char">写</span>
+                <span class="char">真</span>
+            </a>
+            
+            <a href="#" class="nav-item">
+                <span class="char">音</span>
+                <span class="char">楽</span>
+                <span class="char">コ</span>
+                <span class="char">ラ</span>
+                <span class="char">ム</span>
+            </a>
+            
+            <a href="#" class="nav-item">
+                <span class="char">説</span>
+                <span class="char">明</span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="demo-info">
+        <h2>🎉 逐字跳動動畫效果</h2>
+        <p>將鼠標懸停在導航項目上，您會看到每個字符依序跳動的美妙效果！</p>
+        
+        <h3>✨ 效果特色：</h3>
+        <ul>
+            <li><span class="highlight">波浪式跳動</span>：每個字符間隔0.05秒開始動畫</li>
+            <li><span class="highlight">自然跳躍</span>：兩段式跳動（8px → 4px → 0px）</li>
+            <li><span class="highlight">顏色變化</span>：從橄欖綠漸變到深橄欖綠</li>
+            <li><span class="highlight">流暢過渡</span>：0.3秒的平滑過渡效果</li>
+        </ul>
+        
+        <h3>🔧 技術實現：</h3>
+        <ul>
+            <li>每個字符包裝在獨立的 <code>&lt;span&gt;</code> 元素中</li>
+            <li>使用 CSS <code>:nth-child()</code> 選擇器設定不同延遲</li>
+            <li>CSS <code>@keyframes</code> 定義跳動動畫</li>
+            <li>支援中文、日文、英文和符號</li>
+        </ul>
+        
+        <p><strong>現在您的Vue應用已經具備了這個炫酷的逐字跳動效果！</strong></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>瀑布流布局對比：CSS vs JavaScript</title>
+    <style>
+        body {
+            font-family: Avenir, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section {
+            margin-bottom: 4rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #556B2F;
+            margin-bottom: 1rem;
+        }
+        
+        .demo-grid {
+            height: 400px;
+            border: 2px dashed #ccc;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* CSS Columns 版本 */
+        .css-grid {
+            column-count: 3;
+            column-gap: 1rem;
+            column-fill: balance;
+            padding: 1rem;
+        }
+        
+        .css-grid .item {
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 1rem;
+            break-inside: avoid;
+            background: #556B2F;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        /* JavaScript 版本模擬 */
+        .js-grid {
+            position: relative;
+            padding: 1rem;
+        }
+        
+        .js-grid .item {
+            position: absolute;
+            background: #3B5323;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .pros, .cons {
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        .pros {
+            background: #e8f5e8;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .cons {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-card {
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .css-feature {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+        }
+        
+        .js-feature {
+            background: #f3e5f5;
+            border: 2px solid #9c27b0;
+        }
+        
+        .highlight {
+            background: #556B2F;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        code {
+            background: #f5f5f5;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏗️ 瀑布流布局：CSS vs JavaScript 精確控制</h1>
+        
+        <div class="section">
+            <h2>📊 視覺對比</h2>
+            
+            <h3>🎨 CSS Columns 版本（目前使用）</h3>
+            <div class="demo-grid css-grid">
+                <div class="item" style="height: 80px;">照片 1<br>高度: 80px</div>
+                <div class="item" style="height: 120px;">照片 2<br>高度: 120px</div>
+                <div class="item" style="height: 60px;">照片 3<br>高度: 60px</div>
+                <div class="item" style="height: 100px;">照片 4<br>高度: 100px</div>
+                <div class="item" style="height: 90px;">照片 5<br>高度: 90px</div>
+                <div class="item" style="height: 110px;">照片 6<br>高度: 110px</div>
+            </div>
+            
+            <h3>⚡ JavaScript 精確控制版本</h3>
+            <div class="demo-grid js-grid" id="jsGrid">
+                <!-- JavaScript 將動態生成內容 -->
+            </div>
+            
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>✅ CSS 版本優點</h4>
+                    <ul>
+                        <li>簡單易實現</li>
+                        <li>性能優秀</li>
+                        <li>瀏覽器原生支持</li>
+                        <li>響應式自動處理</li>
+                        <li>無需JavaScript</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>⚠️ CSS 版本限制</h4>
+                    <ul>
+                        <li>列高度可能不平衡</li>
+                        <li>無法精確控制位置</li>
+                        <li>順序可能不理想</li>
+                        <li>動畫效果有限</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 JavaScript 精確控制的特色</h2>
+            
+            <div class="feature-comparison">
+                <div class="feature-card css-feature">
+                    <h4>CSS Columns</h4>
+                    <p>瀏覽器自動分配</p>
+                    <small>簡單但控制有限</small>
+                </div>
+                <div class="feature-card js-feature">
+                    <h4>JavaScript 控制</h4>
+                    <p>精確計算每個位置</p>
+                    <small>複雜但完全可控</small>
+                </div>
+                <div class="feature-card" style="background: #e8f5e8; border: 2px solid #4caf50;">
+                    <h4>混合方案</h4>
+                    <p>CSS + JS 增強</p>
+                    <small>平衡性能與控制</small>
+                </div>
+            </div>
+            
+            <h3>🎯 JavaScript 版本的精確控制包括：</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+                <div>
+                    <h4>📐 <span class="highlight">精確位置計算</span></h4>
+                    <ul>
+                        <li>計算每張照片的確切位置</li>
+                        <li>確保列高度最平衡</li>
+                        <li>避免大片空白區域</li>
+                        <li>支持動態調整</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>🎨 <span class="highlight">高級動畫效果</span></h4>
+                    <ul>
+                        <li>照片載入時的漸入動畫</li>
+                        <li>重新排列時的平滑過渡</li>
+                        <li>懸停時的3D效果</li>
+                        <li>自定義動畫時序</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h4>📱 <span class="highlight">智能響應式</span></h4>
+                    <ul>
+                        <li>根據螢幕寬度動態調整列數</li>
+                        <li>智能計算最佳列寬</li>
+                        <li>平滑的斷點過渡</li>
+                        <li>保持最佳視覺比例</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>⚡ <span class="highlight">性能優化</span></h4>
+                    <ul>
+                        <li>虛擬滾動支持</li>
+                        <li>懶加載整合</li>
+                        <li>防抖動重新計算</li>
+                        <li>記憶化位置計算</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>💻 技術實現對比</h2>
+            
+            <h3>CSS 版本（簡單）</h3>
+            <div class="code-block">
+.photo-grid {
+  column-count: 3;
+  column-gap: 1.5rem;
+  column-fill: balance;
+}
+
+.photo-item {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+            </div>
+            
+            <h3>JavaScript 版本（精確）</h3>
+            <div class="code-block">
+const initMasonry = () => {
+  const container = galleryRef.value;
+  const items = container.querySelectorAll('.photo-item');
+  const gap = 24;
+  const containerWidth = container.offsetWidth;
+  
+  // 動態計算最佳列數
+  const columns = Math.max(1, Math.floor((containerWidth + gap) / (300 + gap)));
+  const columnWidth = (containerWidth - (columns - 1) * gap) / columns;
+  
+  // 追蹤每列的高度
+  const columnHeights = new Array(columns).fill(0);
+  
+  items.forEach((item) => {
+    // 找到最短的列
+    const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+    
+    // 精確計算位置
+    const x = shortestColumnIndex * (columnWidth + gap);
+    const y = columnHeights[shortestColumnIndex];
+    
+    // 設置絕對位置
+    item.style.position = 'absolute';
+    item.style.left = `${x}px`;
+    item.style.top = `${y}px`;
+    item.style.width = `${columnWidth}px`;
+    
+    // 更新列高度
+    columnHeights[shortestColumnIndex] += item.offsetHeight + gap;
+  });
+};
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🤔 何時選擇JavaScript版本？</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px;">
+                    <h4>✅ 適合JavaScript版本的情況：</h4>
+                    <ul>
+                        <li>需要完美的列高度平衡</li>
+                        <li>想要複雜的動畫效果</li>
+                        <li>需要精確控制照片順序</li>
+                        <li>要整合虛擬滾動</li>
+                        <li>需要動態添加/移除照片</li>
+                        <li>要支持拖拽重排</li>
+                    </ul>
+                </div>
+                <div style="background: #fff3e0; padding: 1.5rem; border-radius: 8px;">
+                    <h4>⚠️ 保持CSS版本的情況：</h4>
+                    <ul>
+                        <li>追求最佳性能</li>
+                        <li>照片數量不多（<50張）</li>
+                        <li>不需要複雜互動</li>
+                        <li>希望代碼簡潔</li>
+                        <li>SEO優先考量</li>
+                        <li>支援舊瀏覽器</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🎯 建議</h2>
+            <p>對於您的攝影作品集網站，我建議：</p>
+            
+            <div style="background: #f0f7ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #2196f3;">
+                <h4>🏆 推薦方案：保持CSS版本</h4>
+                <p>因為您的網站：</p>
+                <ul>
+                    <li>主要展示攝影作品，重點是<strong>照片本身</strong></li>
+                    <li>CSS版本已經能很好地保持照片比例</li>
+                    <li>性能優秀，載入速度快</li>
+                    <li>代碼簡潔，易於維護</li>
+                </ul>
+                
+                <p><strong>除非您需要以下功能，否則不建議切換到JavaScript版本：</strong></p>
+                <ul>
+                    <li>照片點擊放大的燈箱效果</li>
+                    <li>無限滾動載入更多照片</li>
+                    <li>照片分類篩選動畫</li>
+                    <li>拖拽重新排序功能</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // JavaScript 版本演示
+        function initJSGrid() {
+            const container = document.getElementById('jsGrid');
+            const items = [
+                { text: '照片 1', height: 80 },
+                { text: '照片 2', height: 120 },
+                { text: '照片 3', height: 60 },
+                { text: '照片 4', height: 100 },
+                { text: '照片 5', height: 90 },
+                { text: '照片 6', height: 110 }
+            ];
+            
+            const gap = 16;
+            const containerWidth = container.offsetWidth - 32; // 減去padding
+            const columns = 3;
+            const columnWidth = (containerWidth - (columns - 1) * gap) / columns;
+            const columnHeights = new Array(columns).fill(0);
+            
+            items.forEach((itemData, index) => {
+                const item = document.createElement('div');
+                item.className = 'item';
+                item.textContent = `${itemData.text}\n高度: ${itemData.height}px`;
+                item.style.height = `${itemData.height}px`;
+                item.style.width = `${columnWidth}px`;
+                
+                // 找到最短的列
+                const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+                
+                // 計算位置
+                const x = shortestColumnIndex * (columnWidth + gap);
+                const y = columnHeights[shortestColumnIndex];
+                
+                item.style.left = `${x}px`;
+                item.style.top = `${y}px`;
+                
+                // 更新列高度
+                columnHeights[shortestColumnIndex] += itemData.height + gap;
+                
+                container.appendChild(item);
+            });
+            
+            // 設置容器高度
+            const maxHeight = Math.max(...columnHeights);
+            container.style.height = `${maxHeight}px`;
+        }
+        
+        // 頁面載入後初始化
+        document.addEventListener('DOMContentLoaded', initJSGrid);
+    </script>
+</body>
+</html>

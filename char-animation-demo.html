@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>逐字跳動動畫演示</title>
+    <style>
+        body {
+            font-family: Avenir, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background-color: #f5f5f5;
+        }
+        
+        .demo-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+        
+        .animated-nav-link {
+            font-weight: bold;
+            color: #556B2F;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+        
+        .animated-nav-link.logo {
+            font-size: 1.5rem;
+        }
+        
+        .animated-nav-link:not(.logo) {
+            margin-left: 2rem;
+        }
+        
+        .char {
+            display: inline-block;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .char.space {
+            width: 0.3em;
+        }
+        
+        .animated-nav-link:hover .char {
+            animation: charBounce 0.6s ease-in-out;
+            color: #3B5323;
+        }
+        
+        @keyframes charBounce {
+            0%, 20%, 60%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-8px);
+            }
+            80% {
+                transform: translateY(-4px);
+            }
+        }
+        
+        /* 逐字延遲動畫 */
+        .animated-nav-link:hover .char:nth-child(1) { animation-delay: 0s; }
+        .animated-nav-link:hover .char:nth-child(2) { animation-delay: 0.05s; }
+        .animated-nav-link:hover .char:nth-child(3) { animation-delay: 0.1s; }
+        .animated-nav-link:hover .char:nth-child(4) { animation-delay: 0.15s; }
+        .animated-nav-link:hover .char:nth-child(5) { animation-delay: 0.2s; }
+        .animated-nav-link:hover .char:nth-child(6) { animation-delay: 0.25s; }
+        .animated-nav-link:hover .char:nth-child(7) { animation-delay: 0.3s; }
+        .animated-nav-link:hover .char:nth-child(8) { animation-delay: 0.35s; }
+        .animated-nav-link:hover .char:nth-child(9) { animation-delay: 0.4s; }
+        .animated-nav-link:hover .char:nth-child(10) { animation-delay: 0.45s; }
+        .animated-nav-link:hover .char:nth-child(11) { animation-delay: 0.5s; }
+        .animated-nav-link:hover .char:nth-child(12) { animation-delay: 0.55s; }
+        .animated-nav-link:hover .char:nth-child(13) { animation-delay: 0.6s; }
+        .animated-nav-link:hover .char:nth-child(14) { animation-delay: 0.65s; }
+        .animated-nav-link:hover .char:nth-child(15) { animation-delay: 0.7s; }
+        
+        /* 不同速度的變化 */
+        .speed-fast .animated-nav-link:hover .char:nth-child(1) { animation-delay: 0s; }
+        .speed-fast .animated-nav-link:hover .char:nth-child(2) { animation-delay: 0.03s; }
+        .speed-fast .animated-nav-link:hover .char:nth-child(3) { animation-delay: 0.06s; }
+        .speed-fast .animated-nav-link:hover .char:nth-child(4) { animation-delay: 0.09s; }
+        .speed-fast .animated-nav-link:hover .char:nth-child(5) { animation-delay: 0.12s; }
+        .speed-fast .animated-nav-link:hover .char:nth-child(6) { animation-delay: 0.15s; }
+        .speed-fast .animated-nav-link:hover .char:nth-child(7) { animation-delay: 0.18s; }
+        .speed-fast .animated-nav-link:hover .char:nth-child(8) { animation-delay: 0.21s; }
+        .speed-fast .animated-nav-link:hover .char:nth-child(9) { animation-delay: 0.24s; }
+        .speed-fast .animated-nav-link:hover .char:nth-child(10) { animation-delay: 0.27s; }
+        
+        .speed-slow .animated-nav-link:hover .char:nth-child(1) { animation-delay: 0s; }
+        .speed-slow .animated-nav-link:hover .char:nth-child(2) { animation-delay: 0.08s; }
+        .speed-slow .animated-nav-link:hover .char:nth-child(3) { animation-delay: 0.16s; }
+        .speed-slow .animated-nav-link:hover .char:nth-child(4) { animation-delay: 0.24s; }
+        .speed-slow .animated-nav-link:hover .char:nth-child(5) { animation-delay: 0.32s; }
+        .speed-slow .animated-nav-link:hover .char:nth-child(6) { animation-delay: 0.4s; }
+        .speed-slow .animated-nav-link:hover .char:nth-child(7) { animation-delay: 0.48s; }
+        .speed-slow .animated-nav-link:hover .char:nth-child(8) { animation-delay: 0.56s; }
+        .speed-slow .animated-nav-link:hover .char:nth-child(9) { animation-delay: 0.64s; }
+        .speed-slow .animated-nav-link:hover .char:nth-child(10) { animation-delay: 0.72s; }
+    </style>
+</head>
+<body>
+    <h1>逐字跳動動畫演示</h1>
+    
+    <div class="demo-section">
+        <h2>標準速度（目前使用）</h2>
+        <p>每個字符間隔0.05秒開始動畫，創造流暢的波浪效果</p>
+        <nav>
+            <a href="#" class="animated-nav-link logo">
+                <span class="char">音</span>
+                <span class="char">紡</span>
+                <span class="char space">&nbsp;</span>
+                <span class="char">;</span>
+                <span class="char space">&nbsp;</span>
+                <span class="char">O</span>
+                <span class="char">T</span>
+                <span class="char">O</span>
+                <span class="char">M</span>
+                <span class="char">U</span>
+            </a>
+            <div class="nav-links">
+                <a href="#" class="animated-nav-link">
+                    <span class="char">ホ</span>
+                    <span class="char">ー</span>
+                    <span class="char">ム</span>
+                    <span class="char">ペ</span>
+                    <span class="char">ー</span>
+                    <span class="char">ジ</span>
+                </a>
+                <a href="#" class="animated-nav-link">
+                    <span class="char">写</span>
+                    <span class="char">真</span>
+                </a>
+                <a href="#" class="animated-nav-link">
+                    <span class="char">音</span>
+                    <span class="char">楽</span>
+                    <span class="char">コ</span>
+                    <span class="char">ラ</span>
+                    <span class="char">ム</span>
+                </a>
+                <a href="#" class="animated-nav-link">
+                    <span class="char">説</span>
+                    <span class="char">明</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+    
+    <div class="demo-section speed-fast">
+        <h2>快速版本</h2>
+        <p>每個字符間隔0.03秒，更快的連鎖反應</p>
+        <nav>
+            <a href="#" class="animated-nav-link logo">
+                <span class="char">音</span>
+                <span class="char">紡</span>
+                <span class="char space">&nbsp;</span>
+                <span class="char">;</span>
+                <span class="char space">&nbsp;</span>
+                <span class="char">O</span>
+                <span class="char">T</span>
+                <span class="char">O</span>
+                <span class="char">M</span>
+                <span class="char">U</span>
+            </a>
+            <div class="nav-links">
+                <a href="#" class="animated-nav-link">
+                    <span class="char">音</span>
+                    <span class="char">楽</span>
+                    <span class="char">コ</span>
+                    <span class="char">ラ</span>
+                    <span class="char">ム</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+    
+    <div class="demo-section speed-slow">
+        <h2>慢速版本</h2>
+        <p>每個字符間隔0.08秒，更明顯的逐字效果</p>
+        <nav>
+            <a href="#" class="animated-nav-link logo">
+                <span class="char">音</span>
+                <span class="char">紡</span>
+                <span class="char space">&nbsp;</span>
+                <span class="char">;</span>
+                <span class="char space">&nbsp;</span>
+                <span class="char">O</span>
+                <span class="char">T</span>
+                <span class="char">O</span>
+                <span class="char">M</span>
+                <span class="char">U</span>
+            </a>
+            <div class="nav-links">
+                <a href="#" class="animated-nav-link">
+                    <span class="char">音</span>
+                    <span class="char">楽</span>
+                    <span class="char">コ</span>
+                    <span class="char">ラ</span>
+                    <span class="char">ム</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+    
+    <div class="demo-section">
+        <h2>技術說明</h2>
+        <ul>
+            <li><strong>實現方式</strong>：將每個字符包裝在獨立的 span 元素中</li>
+            <li><strong>動畫延遲</strong>：使用 CSS animation-delay 創造逐字效果</li>
+            <li><strong>跳動動畫</strong>：保持原有的兩段式跳動（8px → 4px → 0px）</li>
+            <li><strong>空格處理</strong>：使用不間斷空格（&nbsp;）保持間距</li>
+            <li><strong>響應式</strong>：適配不同長度的文字</li>
+        </ul>
+    </div>
+</body>
+</html>

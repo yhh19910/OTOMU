@@ -1,0 +1,36 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Set the color theme */
+  color-scheme: light;
+  color: #556B2F; /* Olive Green */
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background-color: #E9E3CE; /* Beige */
+}
+
+/* 防止手機選單開啟時背景滾動 */
+body.mobile-menu-open {
+  overflow: hidden;
+}
+
+/* General heading style */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+/* General link style */
+a {
+  font-weight: 500;
+  text-decoration: inherit;
+}

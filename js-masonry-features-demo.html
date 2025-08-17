@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 瀑布流精確控制功能演示</title>
+    <style>
+        body {
+            font-family: Avenir, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .controls {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .control-group label {
+            font-weight: bold;
+            color: #556B2F;
+        }
+        
+        .control-group input, .control-group select {
+            padding: 0.5rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .control-group input:focus, .control-group select:focus {
+            border-color: #556B2F;
+            outline: none;
+        }
+        
+        .btn {
+            background: #556B2F;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #3B5323;
+        }
+        
+        .gallery-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            position: relative;
+            min-height: 600px;
+        }
+        
+        .masonry-grid {
+            position: relative;
+            width: 100%;
+        }
+        
+        .masonry-item {
+            position: absolute;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .masonry-item:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        
+        .masonry-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        
+        .masonry-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .masonry-item:hover .item-overlay {
+            transform: translateY(0);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #556B2F;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #556B2F;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e0e0e0;
+            border-top: 4px solid #556B2F;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .feature-highlight {
+            background: #e8f5e8;
+            border: 2px solid #556B2F;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .feature-highlight h3 {
+            color: #556B2F;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ JavaScript 瀑布流精確控制演示</h1>
+        
+        <div class="feature-highlight">
+            <h3>🎯 這個演示展示了JavaScript版本的精確控制能力</h3>
+            <p>您可以即時調整參數，看到JavaScript如何精確計算每張照片的位置，創造完美平衡的布局。</p>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>列數 (Columns)</label>
+                <input type="range" id="columns" min="1" max="5" value="3">
+                <span id="columnsValue">3</span>
+            </div>
+            
+            <div class="control-group">
+                <label>間距 (Gap)</label>
+                <input type="range" id="gap" min="10" max="50" value="20">
+                <span id="gapValue">20px</span>
+            </div>
+            
+            <div class="control-group">
+                <label>動畫速度</label>
+                <select id="animationSpeed">
+                    <option value="0.2">快速 (0.2s)</option>
+                    <option value="0.4" selected>標準 (0.4s)</option>
+                    <option value="0.8">慢速 (0.8s)</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>排序方式</label>
+                <select id="sortOrder">
+                    <option value="optimal" selected>最佳平衡</option>
+                    <option value="sequential">順序排列</option>
+                    <option value="random">隨機排列</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <button class="btn" onclick="addRandomItem()">➕ 添加照片</button>
+            </div>
+            
+            <div class="control-group">
+                <button class="btn" onclick="shuffleItems()">🔀 重新排列</button>
+            </div>
+        </div>
+        
+        <div class="gallery-container">
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>正在計算最佳布局...</p>
+            </div>
+            
+            <div id="masonryGrid" class="masonry-grid"></div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalItems">0</div>
+                <div>總照片數</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="columnHeightDiff">0px</div>
+                <div>列高度差異</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="layoutTime">0ms</div>
+                <div>布局計算時間</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="efficiency">100%</div>
+                <div>空間利用率</div>
+            </div>
+        </div>
+        
+        <div class="feature-highlight">
+            <h3>🔧 JavaScript 精確控制的優勢</h3>
+            <ul>
+                <li><strong>完美平衡：</strong>算法確保各列高度差異最小</li>
+                <li><strong>即時調整：</strong>參數變更時立即重新計算最佳布局</li>
+                <li><strong>智能排序：</strong>可選擇不同的排列策略</li>
+                <li><strong>動態添加：</strong>新增項目時自動找到最佳位置</li>
+                <li><strong>性能監控：</strong>實時顯示布局計算效率</li>
+                <li><strong>平滑動畫：</strong>位置變更時的流暢過渡效果</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        class MasonryLayout {
+            constructor(container) {
+                this.container = container;
+                this.items = [];
+                this.columns = 3;
+                this.gap = 20;
+                this.animationDuration = 0.4;
+                this.sortOrder = 'optimal';
+            }
+            
+            addItem(imageUrl, title) {
+                const item = {
+                    id: Date.now() + Math.random(),
+                    imageUrl,
+                    title,
+                    height: Math.random() * 200 + 150 // 隨機高度
+                };
+                this.items.push(item);
+                this.render();
+            }
+            
+            removeItem(id) {
+                this.items = this.items.filter(item => item.id !== id);
+                this.render();
+            }
+            
+            shuffle() {
+                this.items = this.items.sort(() => Math.random() - 0.5);
+                this.render();
+            }
+            
+            setColumns(columns) {
+                this.columns = columns;
+                this.render();
+            }
+            
+            setGap(gap) {
+                this.gap = gap;
+                this.render();
+            }
+            
+            setAnimationDuration(duration) {
+                this.animationDuration = duration;
+                this.updateAnimationDuration();
+            }
+            
+            setSortOrder(order) {
+                this.sortOrder = order;
+                this.render();
+            }
+            
+            updateAnimationDuration() {
+                const items = this.container.querySelectorAll('.masonry-item');
+                items.forEach(item => {
+                    item.style.transition = `all ${this.animationDuration}s cubic-bezier(0.4, 0, 0.2, 1)`;
+                });
+            }
+            
+            calculateLayout() {
+                const startTime = performance.now();
+                
+                const containerWidth = this.container.offsetWidth;
+                const columnWidth = (containerWidth - (this.columns - 1) * this.gap) / this.columns;
+                const columnHeights = new Array(this.columns).fill(0);
+                
+                let sortedItems = [...this.items];
+                
+                // 根據排序方式處理項目
+                if (this.sortOrder === 'random') {
+                    sortedItems = sortedItems.sort(() => Math.random() - 0.5);
+                } else if (this.sortOrder === 'sequential') {
+                    // 保持原順序
+                } else if (this.sortOrder === 'optimal') {
+                    // 按高度排序以獲得更好的平衡
+                    sortedItems = sortedItems.sort((a, b) => b.height - a.height);
+                }
+                
+                const layout = sortedItems.map(item => {
+                    // 找到最短的列
+                    const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+                    
+                    const x = shortestColumnIndex * (columnWidth + this.gap);
+                    const y = columnHeights[shortestColumnIndex];
+                    
+                    // 更新列高度
+                    columnHeights[shortestColumnIndex] += item.height + this.gap;
+                    
+                    return {
+                        ...item,
+                        x,
+                        y,
+                        width: columnWidth
+                    };
+                });
+                
+                const endTime = performance.now();
+                const layoutTime = Math.round(endTime - startTime);
+                
+                // 計算統計數據
+                const maxHeight = Math.max(...columnHeights);
+                const minHeight = Math.min(...columnHeights);
+                const heightDiff = maxHeight - minHeight;
+                const efficiency = Math.round((minHeight / maxHeight) * 100);
+                
+                // 更新統計顯示
+                this.updateStats(this.items.length, heightDiff, layoutTime, efficiency);
+                
+                return {
+                    layout,
+                    containerHeight: maxHeight
+                };
+            }
+            
+            render() {
+                const { layout, containerHeight } = this.calculateLayout();
+                
+                // 清空容器
+                this.container.innerHTML = '';
+                
+                // 設置容器高度
+                this.container.style.height = `${containerHeight}px`;
+                
+                // 創建並定位項目
+                layout.forEach(item => {
+                    const element = this.createElement(item);
+                    this.container.appendChild(element);
+                    
+                    // 使用 requestAnimationFrame 確保平滑動畫
+                    requestAnimationFrame(() => {
+                        element.style.left = `${item.x}px`;
+                        element.style.top = `${item.y}px`;
+                        element.style.width = `${item.width}px`;
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    });
+                });
+            }
+            
+            createElement(item) {
+                const element = document.createElement('div');
+                element.className = 'masonry-item';
+                element.style.position = 'absolute';
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = `all ${this.animationDuration}s cubic-bezier(0.4, 0, 0.2, 1)`;
+                
+                element.innerHTML = `
+                    <img src="${item.imageUrl}" alt="${item.title}" style="height: ${item.height}px; object-fit: cover;">
+                    <div class="item-overlay">
+                        <h4 style="margin: 0 0 0.5rem 0;">${item.title}</h4>
+                        <p style="margin: 0; opacity: 0.8;">尺寸: ${Math.round(item.width)}×${item.height}px</p>
+                    </div>
+                `;
+                
+                // 添加點擊事件
+                element.addEventListener('click', () => {
+                    this.removeItem(item.id);
+                });
+                
+                return element;
+            }
+            
+            updateStats(totalItems, heightDiff, layoutTime, efficiency) {
+                document.getElementById('totalItems').textContent = totalItems;
+                document.getElementById('columnHeightDiff').textContent = `${Math.round(heightDiff)}px`;
+                document.getElementById('layoutTime').textContent = `${layoutTime}ms`;
+                document.getElementById('efficiency').textContent = `${efficiency}%`;
+            }
+        }
+        
+        // 初始化
+        const masonry = new MasonryLayout(document.getElementById('masonryGrid'));
+        
+        // 添加初始項目
+        const initialImages = [
+            'https://picsum.photos/400/300?random=1',
+            'https://picsum.photos/400/500?random=2',
+            'https://picsum.photos/400/250?random=3',
+            'https://picsum.photos/400/400?random=4',
+            'https://picsum.photos/400/350?random=5',
+            'https://picsum.photos/400/450?random=6',
+            'https://picsum.photos/400/300?random=7',
+            'https://picsum.photos/400/380?random=8'
+        ];
+        
+        // 模擬載入延遲
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            
+            initialImages.forEach((url, index) => {
+                setTimeout(() => {
+                    masonry.addItem(url, `照片 ${index + 1}`);
+                }, index * 200);
+            });
+        }, 1000);
+        
+        // 控制項事件監聽
+        document.getElementById('columns').addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            document.getElementById('columnsValue').textContent = value;
+            masonry.setColumns(value);
+        });
+        
+        document.getElementById('gap').addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            document.getElementById('gapValue').textContent = `${value}px`;
+            masonry.setGap(value);
+        });
+        
+        document.getElementById('animationSpeed').addEventListener('change', (e) => {
+            masonry.setAnimationDuration(parseFloat(e.target.value));
+        });
+        
+        document.getElementById('sortOrder').addEventListener('change', (e) => {
+            masonry.setSortOrder(e.target.value);
+        });
+        
+        function addRandomItem() {
+            const randomId = Math.floor(Math.random() * 1000);
+            masonry.addItem(
+                `https://picsum.photos/400/${Math.floor(Math.random() * 300) + 200}?random=${randomId}`,
+                `新照片 ${randomId}`
+            );
+        }
+        
+        function shuffleItems() {
+            masonry.shuffle();
+        }
+        
+        // 響應式處理
+        window.addEventListener('resize', () => {
+            masonry.render();
+        });
+    </script>
+</body>
+</html>
