@@ -90,12 +90,12 @@ const initializeFallbackPhotos = async () => {
     const generatedPhotos: Photo[] = [];
     
     // 手動掃描每個相簿文件夾（必須使用字面量路徑）
-    const albumConfigs = [
-      { id: 'tokyo', name: '東京' },
-      { id: 'fukuoka', name: '福岡' },
-      { id: 'street', name: '街拍' },
-      { id: 'anime', name: '動漫' }
-    ];
+    // const albumConfigs = [
+    //   { id: 'tokyo', name: '東京' },
+    //   { id: 'fukuoka', name: '福岡' },
+    //   { id: 'street', name: '街拍' },
+    //   { id: 'anime', name: '動漫' }
+    // ];
     
     // 東京相簿
     try {
@@ -781,7 +781,7 @@ onMounted(() => {
   line-height: 1.3;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
