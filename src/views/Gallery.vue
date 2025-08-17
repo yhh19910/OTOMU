@@ -20,9 +20,6 @@ interface Album {
   photoCount: number;
 }
 
-// 使用 import.meta.glob 取得所有圖片
-const imageModules = import.meta.glob('../assets/photos/*', { eager: true });
-
 // 響應式數據
 const photos = ref<Photo[]>([]);
 const albums = ref<Album[]>([]);
@@ -82,76 +79,240 @@ onMounted(async () => {
 });
 
 const initializePhotos = async () => {
-  // 將圖片模組轉換為照片數據
-  const imageUrls = Object.values(imageModules).map((module: any) => module.default);
-  
-  // 創建照片數據（這裡可以根據實際需求調整）
-  photos.value = imageUrls.map((url, index) => {
-    const filename = url.split('/').pop()?.split('.')[0] || '';
+  // 暫時直接使用備用方案，確保網站能正常運行
+  await initializeFallbackPhotos();
+};
+
+// 載入相簿照片
+const initializeFallbackPhotos = async () => {
+  try {
+    const generatedAlbums: Album[] = [];
+    const generatedPhotos: Photo[] = [];
     
-    // 根據檔名判斷相簿分類
-    let album = 'general';
-    let tags = ['攝影'];
+    // 手動掃描每個相簿文件夾（必須使用字面量路徑）
+    const albumConfigs = [
+      { id: 'tokyo', name: '東京' },
+      { id: 'fukuoka', name: '福岡' },
+      { id: 'street', name: '街拍' },
+      { id: 'anime', name: '動漫' }
+    ];
     
-    if (filename.includes('440932995') || filename.includes('441509409')) {
-      album = 'portrait';
-      tags = ['人像', '攝影', '藝術'];
-    } else if (filename.includes('444484') || filename.includes('446778')) {
-      album = 'landscape';
-      tags = ['風景', '自然', '攝影'];
-    } else if (filename.includes('447') || filename.includes('470')) {
-      album = 'street';
-      tags = ['街拍', '生活', '攝影'];
-    } else if (filename.includes('home-bg') || filename.includes('photo-1')) {
-      album = 'featured';
-      tags = ['精選', '攝影'];
+    // 東京相簿
+    try {
+      const tokyoModules = import.meta.glob('../assets/album/東京/*', { eager: true });
+      const tokyoUrls = Object.entries(tokyoModules).map(([path, module]: [string, any]) => ({
+        path,
+        url: module.default
+      }));
+      
+      if (tokyoUrls.length > 0) {
+        generatedAlbums.push({
+          id: 'tokyo',
+          name: '東京',
+          cover: tokyoUrls[0].url,
+          description: '東京攝影作品集',
+          photoCount: tokyoUrls.length
+        });
+        
+        tokyoUrls.forEach((item, index) => {
+          const filename = item.path.split('/').pop()?.split('.')[0] || '';
+          generatedPhotos.push({
+            id: `tokyo-${index}`,
+            src: item.url,
+            title: `東京 ${index + 1}`,
+            description: `東京攝影 - ${filename}`,
+            album: 'tokyo',
+            tags: ['東京', '攝影', '旅行'],
+            date: new Date().toISOString().split('T')[0]
+          });
+        });
+        
+        console.log(`📁 載入相簿: 東京 (${tokyoUrls.length} 張照片)`);
+      }
+    } catch (error) {
+      console.warn('⚠️ 東京文件夾不存在或無照片');
     }
     
-    return {
-      id: `photo-${index}`,
-      src: url,
-      title: `照片 ${index + 1}`,
-      description: `這是第 ${index + 1} 張照片的描述`,
-      album,
-      tags,
-      date: new Date(2024, 0, index + 1).toISOString().split('T')[0]
-    };
-  });
-  
-  // 創建相簿數據
-  const albumGroups = photos.value.reduce((acc, photo) => {
-    if (!acc[photo.album]) {
-      acc[photo.album] = [];
+    // 福岡相簿
+    try {
+      const fukuokaModules = import.meta.glob('../assets/album/福岡/*', { eager: true });
+      const fukuokaUrls = Object.entries(fukuokaModules).map(([path, module]: [string, any]) => ({
+        path,
+        url: module.default
+      }));
+      
+      if (fukuokaUrls.length > 0) {
+        generatedAlbums.push({
+          id: 'fukuoka',
+          name: '福岡',
+          cover: fukuokaUrls[0].url,
+          description: '福岡攝影作品集',
+          photoCount: fukuokaUrls.length
+        });
+        
+        fukuokaUrls.forEach((item, index) => {
+          const filename = item.path.split('/').pop()?.split('.')[0] || '';
+          generatedPhotos.push({
+            id: `fukuoka-${index}`,
+            src: item.url,
+            title: `福岡 ${index + 1}`,
+            description: `福岡攝影 - ${filename}`,
+            album: 'fukuoka',
+            tags: ['福岡', '攝影', '旅行'],
+            date: new Date().toISOString().split('T')[0]
+          });
+        });
+        
+        console.log(`📁 載入相簿: 福岡 (${fukuokaUrls.length} 張照片)`);
+      }
+    } catch (error) {
+      console.warn('⚠️ 福岡文件夾不存在或無照片');
     }
-    acc[photo.album].push(photo);
-    return acc;
-  }, {} as Record<string, Photo[]>);
-  
-  albums.value = Object.entries(albumGroups).map(([albumId, albumPhotos]) => {
-    const albumNames: Record<string, string> = {
-      portrait: '人像攝影',
-      landscape: '風景攝影',
-      street: '街頭攝影',
-      featured: '精選作品',
-      general: '其他作品'
-    };
     
-    const albumDescriptions: Record<string, string> = {
-      portrait: '捕捉人物的神韻與情感',
-      landscape: '記錄大自然的壯麗與美好',
-      street: '街頭巷尾的生活片段',
-      featured: '精心挑選的代表作品',
-      general: '各種主題的攝影作品'
-    };
+    // 街拍相簿
+    try {
+      const streetModules = import.meta.glob('../assets/album/街拍/*', { eager: true });
+      const streetUrls = Object.entries(streetModules).map(([path, module]: [string, any]) => ({
+        path,
+        url: module.default
+      }));
+      
+      if (streetUrls.length > 0) {
+        generatedAlbums.push({
+          id: 'street',
+          name: '街拍',
+          cover: streetUrls[0].url,
+          description: '街拍攝影作品集',
+          photoCount: streetUrls.length
+        });
+        
+        streetUrls.forEach((item, index) => {
+          const filename = item.path.split('/').pop()?.split('.')[0] || '';
+          generatedPhotos.push({
+            id: `street-${index}`,
+            src: item.url,
+            title: `街拍 ${index + 1}`,
+            description: `街拍攝影 - ${filename}`,
+            album: 'street',
+            tags: ['街拍', '攝影', '城市'],
+            date: new Date().toISOString().split('T')[0]
+          });
+        });
+        
+        console.log(`📁 載入相簿: 街拍 (${streetUrls.length} 張照片)`);
+      }
+    } catch (error) {
+      console.warn('⚠️ 街拍文件夾不存在或無照片');
+    }
+
+    try {
+      const newAlbumModules = import.meta.glob('../assets/album/動漫/*', { eager: true });
+      const newAlbumUrls = Object.entries(newAlbumModules).map(([path, module]: [string, any]) => ({
+        path,
+        url: module.default
+      }));
+      
+      if (newAlbumUrls.length > 0) {
+        generatedAlbums.push({
+          id: 'anime',
+          name: '動漫',
+          cover: newAlbumUrls[0].url,
+          description: '動漫',
+          photoCount: newAlbumUrls.length
+        });
+        
+        newAlbumUrls.forEach((item, index) => {
+          const filename = item.path.split('/').pop()?.split('.')[0] || '';
+          generatedPhotos.push({
+            id: `newalbum-${index}`,
+            src: item.url,
+            title: `動漫 ${index + 1}`,
+            description: `動漫照片 - ${filename}`,
+            album: 'anime',
+            tags: ['動漫', 'twitter'],
+            date: new Date().toISOString().split('T')[0]
+          });
+        });
+        
+        console.log(`📁 載入相簿: 動漫 (${newAlbumUrls.length} 張照片)`);
+      }
+    } catch (error) {
+      console.warn('⚠️ 動漫文件夾不存在或無照片');
+    }
     
-    return {
-      id: albumId,
-      name: albumNames[albumId] || '未分類',
-      cover: albumPhotos[0]?.src || '',
-      description: albumDescriptions[albumId] || '',
-      photoCount: albumPhotos.length
-    };
-  });
+    // 🔧 要添加第四本相簿時，在這裡添加類似的代碼塊：
+    /*
+    try {
+      const newAlbumModules = import.meta.glob('../assets/album/新相簿/*', { eager: true });
+      const newAlbumUrls = Object.entries(newAlbumModules).map(([path, module]: [string, any]) => ({
+        path,
+        url: module.default
+      }));
+      
+      if (newAlbumUrls.length > 0) {
+        generatedAlbums.push({
+          id: 'newalbum',
+          name: '新相簿',
+          cover: newAlbumUrls[0].url,
+          description: '新相簿攝影作品集',
+          photoCount: newAlbumUrls.length
+        });
+        
+        newAlbumUrls.forEach((item, index) => {
+          const filename = item.path.split('/').pop()?.split('.')[0] || '';
+          generatedPhotos.push({
+            id: `newalbum-${index}`,
+            src: item.url,
+            title: `新相簿 ${index + 1}`,
+            description: `新相簿攝影 - ${filename}`,
+            album: 'newalbum',
+            tags: ['新相簿', '攝影'],
+            date: new Date().toISOString().split('T')[0]
+          });
+        });
+        
+        console.log(`📁 載入相簿: 新相簿 (${newAlbumUrls.length} 張照片)`);
+      }
+    } catch (error) {
+      console.warn('⚠️ 新相簿文件夾不存在或無照片');
+    }
+    */
+    
+    // 如果沒有找到任何相簿，使用 photos 文件夾作為備用
+    if (generatedAlbums.length === 0) {
+      console.log('🔄 未找到 album 文件夾，使用 photos 文件夾作為備用');
+      const imageModules = import.meta.glob('../assets/photos/*', { eager: true });
+      const imageUrls = Object.values(imageModules).map((module: any) => module.default);
+      
+      if (imageUrls.length > 0) {
+        generatedAlbums.push({
+          id: 'photos',
+          name: '攝影作品',
+          cover: imageUrls[0],
+          description: '攝影作品集',
+          photoCount: imageUrls.length
+        });
+        
+        generatedPhotos.push(...imageUrls.map((url, index) => ({
+          id: `photo-${index}`,
+          src: url,
+          title: `照片 ${index + 1}`,
+          description: `攝影作品`,
+          album: 'photos',
+          tags: ['攝影'],
+          date: new Date().toISOString().split('T')[0]
+        })));
+      }
+    }
+    
+    albums.value = generatedAlbums;
+    photos.value = generatedPhotos;
+    
+    console.log(`✅ 成功載入 ${albums.value.length} 個相簿，共 ${photos.value.length} 張照片`);
+    
+  } catch (error) {
+    console.error('❌ 載入相簿失敗:', error);
+  }
 };
 
 // 瀑布流布局函數
@@ -534,30 +695,22 @@ onMounted(() => {
   width: 280px;
   height: 350px;
   cursor: pointer;
-  transition: all 0.6s ease;
-  transform-style: preserve-3d;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .album-book:hover {
-  transform: rotateY(-15deg) translateY(-10px);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-color: #6C7B6A;
 }
 
 .book-spine {
-  position: absolute;
-  left: -20px;
-  top: 0;
-  width: 40px;
-  height: 100%;
-  background: linear-gradient(135deg, #8B4513, #A0522D);
-  transform: rotateY(-90deg);
-  transform-origin: right center;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0.5rem;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
-  z-index: 1;
+  display: none;
 }
 
 .spine-text {
@@ -585,33 +738,20 @@ onMounted(() => {
   position: relative;
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.6s ease;
-}
-
-.album-book:hover .book-cover {
-  transform: rotateY(-25deg);
 }
 
 .cover-front {
-  position: absolute;
+  position: relative;
   width: 100%;
   height: 100%;
   background: white;
-  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 
-    0 0 0 3px #8B4513,
-    0 8px 25px rgba(0, 0, 0, 0.3),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-  transform: translateZ(10px);
 }
 
 .cover-front img {
   width: 100%;
   height: 70%;
   object-fit: cover;
-  border-radius: 4px 4px 0 0;
 }
 
 .cover-overlay {
@@ -620,7 +760,7 @@ onMounted(() => {
   left: 0;
   right: 0;
   height: 30%;
-  background: linear-gradient(135deg, #6C7B6A, #6B8E23);
+  background: #6C7B6A;
   color: white;
   padding: 1rem;
   display: flex;
@@ -632,7 +772,6 @@ onMounted(() => {
   margin: 0 0 0.5rem 0;
   font-size: 1.2rem;
   font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .cover-description {
@@ -652,41 +791,17 @@ onMounted(() => {
 
 .photo-count {
   background: rgba(255, 255, 255, 0.2);
-  padding: 0.2rem 0.6rem;
-  border-radius: 12px;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 500;
-  backdrop-filter: blur(5px);
 }
 
 .cover-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #8B4513, #A0522D);
-  border-radius: 8px;
-  transform: translateZ(-5px);
-  box-shadow: 0 0 0 3px #654321;
+  display: none;
 }
 
-/* 添加書本紋理效果 */
-.cover-front::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.02) 2px,
-      rgba(0, 0, 0, 0.02) 4px
-    );
-  pointer-events: none;
-}
+/* 移除書本紋理效果 */
 
 /* 書本陰影效果 */
 .album-book::after {
